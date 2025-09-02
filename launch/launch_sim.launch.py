@@ -3,7 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
@@ -26,9 +26,15 @@ def generate_launch_description():
         )])
     )
     
-    # spawn_entity = Node(package='ros_gz_sim', executable)
+    spawn_entity = Node(package='ros_gz_sim', executable='create', arguments=[
+        "-name", "my_bot",
+        "-topic", "/robot_description",
+        "-z", "0.1"
+        ],
+    )
     
     return LaunchDescription([
         rsp,
-        gazebo
+        gazebo,
+        TimerAction(period=2.0, actions=[spawn_entity]),
     ])
