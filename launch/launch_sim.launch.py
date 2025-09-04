@@ -35,7 +35,7 @@ def generate_launch_description():
             ]),
             launch_arguments={
                 "gz_args": os.path.join(
-                    get_package_share_directory(package_name), "worlds", "my_world.sdf"
+                    get_package_share_directory(package_name), "worlds", "my_world.world"
                 )
             }.items(),
     )
