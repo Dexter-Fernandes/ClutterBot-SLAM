@@ -32,12 +32,19 @@ def generate_launch_description():
                     "launch",
                     "gz_sim.launch.py",
                 )
-            ]),
-            launch_arguments={
-                "gz_args": os.path.join(
-                    get_package_share_directory(package_name), "worlds", "my_world.world"
-                )
-            }.items(),
+            ]
+        ),
+        launch_arguments={
+            "gz_args": [
+                "-r -v4 ",
+                os.path.join(
+                    get_package_share_directory(package_name),
+                    "worlds",
+                    "my_world.world",
+                ),
+            ],
+            "on_exit_shutdown": "true",
+        }.items(),
     )
 
     spawn_entity = Node(
