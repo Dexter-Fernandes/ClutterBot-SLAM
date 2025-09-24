@@ -107,12 +107,19 @@ def generate_launch_description():
         output="screen",
     )
 
+    ros_gz_image_bridge = Node(
+        package="ros_gz_image",
+        executable="image_bridge",
+        arguments=["/camera/image_raw"],
+    )
+
     return LaunchDescription(
         [
             rsp,
             gazebo,
             spawn_entity,
             ros_gz_bridge,
+            ros_gz_image_bridge,
             # controller_manager,
             # joint_broad_spawner,
             # diff_drive_spawner,
