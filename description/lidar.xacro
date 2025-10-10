@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+    <material name="red">
+        <color rgba="1.0 0.0 0.0 1.0" />
+    </material>
+    
     <joint name="laser_joint" type="fixed">
         <parent link="chassis" />
         <child link="laser_frame" />
@@ -42,19 +46,25 @@
                 <range>
                     <min>0.3</min>
                     <max>12</max>
+                    <resolution>0.001</resolution>
                 </range>
+
+                <noise type="gaussian">
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev> <!-- 1 cm standard deviation -->
+                </noise>
             </lidar>
             <topic>scan</topic>
             <gz_frame_id>laser_frame</gz_frame_id>
         </sensor>
     </gazebo>
 
-    <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
+    <!-- <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
         <ros>
             <argument>~/out:=scan</argument>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>laser_frame</frame_name>
-    </plugin>
+    </plugin> -->
 
 </robot>

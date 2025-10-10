@@ -16,29 +16,11 @@ def generate_launch_description():
     pkg_name = "my_bot"
     pkg_share = get_package_share_directory(pkg_name)
 
-    # /home/dev_ws/src/my_bot/description/robot.urdf.xacro
-    urdf_path = PathJoinSubstitution([pkg_share, "description", "robot.urdf.xacro"])
-
-    # urdf_path = "/home/dev_ws/src/my_bot/description/robot.urdf.xacro"
-
-    robot_description = ParameterValue(Command(["xacro ", urdf_path]), value_type=str)
-
-    # rsp = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         [
-    #             os.path.join(
-    #                 pkg_share, "launch", "rsp.launch.py"
-    #             )
-    #         ]
-    #     ),
-    #     launch_arguments={"use_sim_time": "true"}.items(),
-    # )
-
-    rsp = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        parameters=[{"use_sim_time": True, "robot_description": robot_description}],
-        output="screen",
+    rsp = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [os.path.join(pkg_share, "launch", "rsp.launch.py")]
+        ),
+        launch_arguments={"use_sim_time": "true"}.items(),
     )
 
     gazebo = IncludeLaunchDescription(
@@ -57,7 +39,7 @@ def generate_launch_description():
                 os.path.join(
                     pkg_share,
                     "worlds",
-                    "my_world.world",
+                    "warehouse.sdf",
                 ),
             ],
             "on_exit_shutdown": "true",
@@ -71,33 +53,15 @@ def generate_launch_description():
         output="screen",
     )
 
-    # controller_manager = Node(
-    #     package="controller_manager",
-    #     executable="ros2_control_node",
-    #     parameters=[
-    #         {"robot_description": robot_description},
-    #         PathJoinSubstitution([pkg_share, "config", "controller_manager.yaml"]),
-    #     ],
-    #     output="screen",
-    # )
-
-    # joint_broad_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=[
-    #         "joint_broad"
-    # "joint_state_broadcaster",
-    # "--controller-manager",
-    # "/controller_manager",
-    #     ],
-    # )
-
-    # diff_drive_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    # arguments=["diff_drive", "--controller-manager", "/controller_manager"],
-    #     arguments=["diff_cont"],
-    # )
+    rviz_config = os.path.join(pkg_share, "config", "view_bot.rviz")
+    rviz2 = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        arguments=["-d", rviz_config],
+        parameters=[{"use_sim_time": True}],
+        output="screen",
+    )
 
     bridge_params = os.path.join(pkg_share, "config", "gz_bridge.yaml")
     ros_gz_bridge = Node(
@@ -113,6 +77,21 @@ def generate_launch_description():
         arguments=["/camera/image_raw"],
     )
 
+    slam_toolbox_launch = PathJoinSubstitution(
+        [
+            get_package_share_directory("slam_toolbox"),
+            "launch",
+            "online_async_launch.py",
+        ]
+    )
+    mapper_params = PathJoinSubstitution(
+        [pkg_share, "config", "mapper_params_online_async.yaml"]
+    )
+    slam_toolbox = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(slam_toolbox_launch),
+        launch_arguments={"use_sim_time": "true", "params_file": mapper_params}.items(),
+    )
+
     return LaunchDescription(
         [
             rsp,
@@ -120,8 +99,7 @@ def generate_launch_description():
             spawn_entity,
             ros_gz_bridge,
             ros_gz_image_bridge,
-            # controller_manager,
-            # joint_broad_spawner,
-            # diff_drive_spawner,
+            slam_toolbox,
+            rviz2,
         ]
     )

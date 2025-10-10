@@ -5,7 +5,7 @@
     <xacro:include filename="gazebo_control.xacro"/>
     <xacro:include filename="lidar.xacro"/>
     <xacro:include filename="rgb_camera.xacro"/>
-    <xacro:include filename="depth_camera.xacro"/>
+    <!-- <xacro:include filename="depth_camera.xacro"/> -->
 
     <!-- <xacro:include filename="ros2_control.xacro" /> -->
     <!-- <xacro:add_ros2_control left_joint="left_wheel_joint" right_joint="right_wheel_joint"/> -->
