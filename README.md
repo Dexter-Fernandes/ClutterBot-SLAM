@@ -1,5 +1,11 @@
-## my_bot
+# Clutterbot-SLAM
 
-This is a project I have done by following Articulated Robotics' tutorial on How to Build a Mobile Robot.
+Successor project to [`my_bot`](https://github.com/Dexter-Fernandes/my_bot).
 
-As of now, the project is simply in the simulation phase. 
+This repo extends my original ROS2 mobile robot simulation by adding:
+
+- Simulated RGB-D camera and IMU
+- Sensor fusion with `robot_localization` (EKF)
+- SLAM using RTAB-Map / Cartographer / slam_toolbox (fallback)
+- A cluttered “messy warehouse” world with static and dynamic obstacles
+- Basic evaluation of LiDAR-only vs RGB-D + LiDAR mapping quality
