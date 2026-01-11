@@ -8,13 +8,17 @@ Panels:
         - /Image1/Topic1
         - /Depth camera1
         - /Map1
-        - /LaserScan1
-        - /LaserScan1/Topic1
-        - /LaserScan1/Autocompute Value Bounds1
+        - /2D LiDAR1/Topic1
+        - /2D LiDAR1/Autocompute Value Bounds1
+        - /3D LiDAR1
+        - /3D LiDAR1/Topic1
+        - /Path1
+        - /Path2
+        - /Map2
+        - /Map3
         - /PointCloud21
-        - /PointCloud21/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 425
+    Tree Height: 433
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -32,7 +36,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: 3D LiDAR
   - Class: slam_toolbox::SlamToolboxPlugin
     Name: SlamToolboxPlugin
   - Class: nav2_rviz_plugins/Docking
@@ -73,6 +77,12 @@ Visualization Manager:
           Value: true
         chassis:
           Value: true
+        depth_camera_link:
+          Value: true
+        depth_camera_link_optical:
+          Value: true
+        imu_link:
+          Value: true
         laser_frame:
           Value: true
         left_wheel:
@@ -94,22 +104,28 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          odom:
-            base_link:
-              base_footprint:
+          {}
+        odom:
+          base_link:
+            base_footprint:
+              {}
+            chassis:
+              caster_wheel:
                 {}
-              chassis:
-                caster_wheel:
+              depth_camera_link:
+                depth_camera_link_optical:
                   {}
-                laser_frame:
+              imu_link:
+                {}
+              laser_frame:
+                {}
+              rgb_camera_link:
+                rgb_camera_link_optical:
                   {}
-                rgb_camera_link:
-                  rgb_camera_link_optical:
-                    {}
-              left_wheel:
-                {}
-              right_wheel:
-                {}
+            left_wheel:
+              {}
+            right_wheel:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -148,6 +164,19 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        depth_camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        depth_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         laser_frame:
           Alpha: 1
           Show Axes: false
@@ -181,7 +210,7 @@ Visualization Manager:
       Value: true
       Visual Enabled: true
     - Class: rviz_default_plugins/Image
-      Enabled: false
+      Enabled: true
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -193,7 +222,7 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /camera/image_raw
-      Value: false
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -253,8 +282,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10.838397026062012
-        Min Value: -11.250423431396484
+        Max Value: 15.034342765808105
+        Min Value: -15.030390739440918
         Value: true
       Axis: X
       Channel Name: intensity
@@ -262,17 +291,17 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 0
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: LaserScan
+      Name: 2D LiDAR
       Position Transformer: XYZ
       Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.07999999821186066
+      Size (Pixels): 1
+      Size (m): 0.05000000074505806
       Style: Flat Squares
       Topic:
         Depth: 5
@@ -283,12 +312,12 @@ Visualization Manager:
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.17499999701976776
-        Min Value: 0.17499999701976776
+        Max Value: 5.591197490692139
+        Min Value: 0.05978894233703613
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -296,17 +325,17 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: false
-      Invert Rainbow: false
+      Enabled: true
+      Invert Rainbow: true
       Max Color: 255; 255; 255
       Max Intensity: 0
       Min Color: 0; 0; 0
       Min Intensity: 0
-      Name: PointCloud2
+      Name: 3D LiDAR
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.029999999329447746
+      Size (m): 0.10000000149011612
       Style: Spheres
       Topic:
         Depth: 5
@@ -316,7 +345,142 @@ Visualization Manager:
         Value: /scan/points
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz_default_plugins/Path
+      Color: 255; 0; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.029999999329447746
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /plan
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz_default_plugins/Path
+      Color: 0; 0; 255
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /optimal_trajectory
+      Value: true
+    - Alpha: 0.5
+      Binary representation: false
+      Binary threshold: 100
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: false
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap_updates
+      Use Timestamp: false
       Value: false
+    - Alpha: 1
+      Binary representation: false
+      Binary threshold: 100
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap_updates
+      Use Timestamp: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.029999999329447746
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /cloud_map
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -364,37 +528,37 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 12.304849624633789
+      Distance: 18.26445198059082
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.347966194152832
-        Y: 6.474809169769287
-        Z: 10.0817289352417
+        X: 3.3455920219421387
+        Y: 6.474590301513672
+        Z: 10.08203125
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9647983908653259
+      Pitch: 0.7147983908653259
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.7566903829574585
+      Yaw: 0.6666921973228455
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
   Docking:
     collapsed: false
-  Height: 711
+  Height: 1036
   Hide Left Dock: false
   Hide Right Dock: true
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000002050000022dfc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005d00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003e0000022d000000cb00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065000000025e000001290000001600fffffffb000000220053006c0061006d0054006f006f006c0062006f00780050006c007500670069006e000000010f0000015c0000018500fffffffb0000000e0044006f0063006b0069006e006700000002710000014d0000014d00ffffff000000010000010f00000349fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003e00000349000000a500fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000003b600000039fc0100000002fb0000000800540069006d00650100000000000003b60000027900fffffffb0000000800540069006d00650100000000000004500000000000000000000001ab0000022d00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000015600000372fc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005d00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003e00000235000000cb00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d0061006700650100000279000001370000001600fffffffb000000220053006c0061006d0054006f006f006c0062006f00780050006c007500670069006e000000010f0000015c0000018500fffffffb0000000e0044006f0063006b0069006e006700000002710000014d0000014d00ffffff000000010000010f00000349fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003e00000349000000a500fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000039fc0100000002fb0000000800540069006d00650100000000000007800000027900fffffffb0000000800540069006d00650100000000000004500000000000000000000006240000037200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   SlamToolboxPlugin:
@@ -405,6 +569,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: true
-  Width: 950
-  X: 961
-  Y: 284
+  Width: 1920
+  X: 0
+  Y: 0

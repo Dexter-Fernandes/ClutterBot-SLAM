@@ -49,7 +49,8 @@ def generate_launch_description():
     spawn_entity = Node(
         package="ros_gz_sim",
         executable="create",
-        arguments=["-name", "my_bot", "-topic", "robot_description", "-z", "0.1"],
+        arguments=["-name", "my_bot", "-topic",
+                   "robot_description", "-z", "0.1"],
         output="screen",
     )
 
@@ -89,7 +90,16 @@ def generate_launch_description():
     )
     slam_toolbox = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(slam_toolbox_launch),
-        launch_arguments={"use_sim_time": "true", "params_file": mapper_params}.items(),
+        launch_arguments={"use_sim_time": "true",
+                          "params_file": mapper_params}.items(),
+    )
+
+    rtabmap_launch = PathJoinSubstitution(
+        [pkg_share, "launch", "rtabmap_lidar.launch.py"]
+    )
+
+    rtabmap = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(rtabmap_launch)
     )
 
     return LaunchDescription(
@@ -99,7 +109,8 @@ def generate_launch_description():
             spawn_entity,
             ros_gz_bridge,
             ros_gz_image_bridge,
-            slam_toolbox,
+            # slam_toolbox,
+            # rtabmap,
             rviz2,
         ]
     )

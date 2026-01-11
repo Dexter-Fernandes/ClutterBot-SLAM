@@ -1,0 +1,65 @@
+rtabmap:
+  ros__parameters:
+    use_sim_time: true
+
+    # Frames
+    frame_id: base_link
+    odom_frame_id: odom
+    map_frame_id: map
+
+    # TF
+    publish_tf: true
+    wait_for_transform: 0.5
+    tf_tolerance: 0.2
+
+    # LiDAR-only subscriptions
+    subscribe_rgb: false
+    subscribe_depth: false
+    subscribe_rgbd: false
+    subscribe_scan: false
+    subscribe_scan_cloud: true
+
+    # Sync/timing (Gazebo-friendly)
+    approx_sync: true
+
+    # Registration strategy: 1 = ICP
+    Reg/Strategy: "1"
+
+    # Reduce occupancy/grid artefacts
+    map_empty_ray_tracing: false
+    cloud_output_voxelized: true
+
+    # Safe ICP defaults (tune later)
+    Icp/VoxelSize: "0.1"
+    Icp/MaxCorrespondenceDistance: "1.0"
+
+    # stop streaky clearing rays
+    # map_empty_ray_tracing: false
+    Grid/RayTracing: "true"
+
+    # build occupancy grid from cloud projection
+    Grid/Sensor: "0"
+    # Grid/Sensor: "false"
+
+    # cap usable range (should roughly match your LiDAR max in sim)
+    Grid/RangeMax: "20.0"
+
+    # denoise
+    Grid/NoiseFilteringRadius: "0.20"
+    Grid/NoiseFilteringMinNeighbors: "2"
+
+    "Grid/MaxGroundHeight": 0.15,     # ignore ground above this
+    # "Grid/MaxObstacleHeight": 2.0,    # ignore very tall stuff
+
+rtabmap_viz:
+  ros__parameters:
+    use_sim_time: true
+    frame_id: base_link
+    odom_frame_id: odom
+    map_frame_id: map
+
+    subscribe_rgb: false
+    subscribe_depth: false
+    subscribe_scan_cloud: true
+    approx_sync: true
+
