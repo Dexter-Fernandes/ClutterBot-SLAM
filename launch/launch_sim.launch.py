@@ -3,24 +3,30 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.substitutions import Command, PathJoinSubstitution
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
 
     pkg_name = "my_bot"
     pkg_share = get_package_share_directory(pkg_name)
+    use_ros2_control = LaunchConfiguration("use_ros2_control")
+    use_sensor_fusion = LaunchConfiguration("use_sensor_fusion")
 
     rsp = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [os.path.join(pkg_share, "launch", "rsp.launch.py")]
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),
+        launch_arguments={
+            "use_sim_time": "true",
+            "use_ros2_control": use_ros2_control,
+            "use_sensor_fusion": use_sensor_fusion,
+        }.items(),
     )
 
     gazebo = IncludeLaunchDescription(
@@ -64,18 +70,103 @@ def generate_launch_description():
         output="screen",
     )
 
-    bridge_params = os.path.join(pkg_share, "config", "gz_bridge.yaml")
-    ros_gz_bridge = Node(
+    bridge_params_legacy = os.path.join(pkg_share, "config", "gz_bridge.yaml")
+    bridge_params_legacy_sensor_fusion = os.path.join(
+        pkg_share, "config", "gz_bridge_legacy_sensor_fusion.yaml"
+    )
+    bridge_params_ros2_control = os.path.join(
+        pkg_share, "config", "gz_bridge_ros2_control.yaml"
+    )
+    ros_gz_bridge_legacy = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        arguments=["--ros-args", "-p", f"config_file:={bridge_params}"],
+        arguments=["--ros-args", "-p", f"config_file:={bridge_params_legacy}"],
         output="screen",
+        condition=IfCondition(
+            PythonExpression(
+                ["'", use_ros2_control, "' == 'false' and '", use_sensor_fusion, "' == 'false'"]
+            )
+        ),
+    )
+
+    ros_gz_bridge_legacy_sensor_fusion = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=[
+            "--ros-args",
+            "-p",
+            f"config_file:={bridge_params_legacy_sensor_fusion}",
+        ],
+        output="screen",
+        condition=IfCondition(
+            PythonExpression(
+                ["'", use_ros2_control, "' == 'false' and '", use_sensor_fusion, "' == 'true'"]
+            )
+        ),
+    )
+
+    ros_gz_bridge_ros2_control = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["--ros-args", "-p", f"config_file:={bridge_params_ros2_control}"],
+        output="screen",
+        condition=IfCondition(use_ros2_control),
     )
 
     ros_gz_image_bridge = Node(
         package="ros_gz_image",
         executable="image_bridge",
         arguments=["/camera/image_raw"],
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            "120",
+        ],
+        output="screen",
+        condition=IfCondition(use_ros2_control),
+    )
+
+    diff_drive_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "diff_drive_controller",
+            "--controller-manager",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            "120",
+        ],
+        output="screen",
+        condition=IfCondition(use_ros2_control),
+    )
+
+    delayed_joint_state_broadcaster_spawner = TimerAction(
+        period=3.0,
+        actions=[joint_state_broadcaster_spawner],
+        condition=IfCondition(use_ros2_control),
+    )
+
+    delayed_diff_drive_controller_spawner = TimerAction(
+        period=5.0,
+        actions=[diff_drive_controller_spawner],
+        condition=IfCondition(use_ros2_control),
+    )
+
+    ekf_params = os.path.join(pkg_share, "config", "ekf.yaml")
+    ekf_node = Node(
+        package="robot_localization",
+        executable="ekf_node",
+        name="ekf_filter_node",
+        output="screen",
+        parameters=[ekf_params],
+        condition=IfCondition(use_sensor_fusion),
     )
 
     slam_toolbox_launch = PathJoinSubstitution(
@@ -104,11 +195,26 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            DeclareLaunchArgument(
+                "use_ros2_control",
+                default_value="true",
+                description="Use ros2_control diff_drive stack instead of Gazebo DiffDrive plugin",
+            ),
+            DeclareLaunchArgument(
+                "use_sensor_fusion",
+                default_value="true",
+                description="Enable EKF sensor fusion and use EKF as odom TF source",
+            ),
             rsp,
             gazebo,
             spawn_entity,
-            ros_gz_bridge,
+            ros_gz_bridge_legacy,
+            ros_gz_bridge_legacy_sensor_fusion,
+            ros_gz_bridge_ros2_control,
             ros_gz_image_bridge,
+            delayed_joint_state_broadcaster_spawner,
+            delayed_diff_drive_controller_spawner,
+            ekf_node,
             # slam_toolbox,
             # rtabmap,
             rviz2,

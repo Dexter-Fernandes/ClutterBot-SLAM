@@ -21,6 +21,9 @@ rtabmap:
 
     # Sync/timing (Gazebo-friendly)
     approx_sync: true
+    topic_queue_size: 30
+    sync_queue_size: 30
+
 
     # Registration strategy: 1 = ICP
     Reg/Strategy: "1"
@@ -34,7 +37,6 @@ rtabmap:
     Icp/MaxCorrespondenceDistance: "1.0"
 
     # stop streaky clearing rays
-    # map_empty_ray_tracing: false
     Grid/RayTracing: "true"
 
     # build occupancy grid from cloud projection
@@ -42,14 +44,24 @@ rtabmap:
     # Grid/Sensor: "false"
 
     # cap usable range (should roughly match your LiDAR max in sim)
-    Grid/RangeMax: "20.0"
+    # Grid/RangeMax: "20.0"
+    Grid/RangeMax: "100.0"
 
     # denoise
     Grid/NoiseFilteringRadius: "0.20"
     Grid/NoiseFilteringMinNeighbors: "2"
 
-    "Grid/MaxGroundHeight": 0.15,     # ignore ground above this
+    # Grid/MaxGroundHeight: 0.15,     # ignore ground above this
     # "Grid/MaxObstacleHeight": 2.0,    # ignore very tall stuff
+
+    # Topics (rtabmap_ros parameters)
+    rgb_topic: /camera/image_raw
+    camera_info_topic: /camera/camera_info
+
+    # Bag-of-words / loop closure (defaults are usually fine, but explicit helps)
+    Kp/DetectorStrategy: "6"     # ORB (fast, robust)
+    Kp/MaxFeatures: "1000"
+    Vis/MinInliers: "15"
 
 rtabmap_viz:
   ros__parameters:
